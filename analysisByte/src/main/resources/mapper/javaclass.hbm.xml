@@ -1,0 +1,19 @@
+<!--在domain包下-->
+<hibernate-mapping package="model">
+
+    <!--类名为User，表名也为User-->
+    <class name="model.JavaClass" table="class">
+
+        <!--主键映射，属性名为id，列名也为id-->
+        <id name="id" column="id">
+            <!--根据底层数据库主键自动增长-->
+            <generator class="native"/>
+
+        </id>
+
+        <!--非主键映射，属性和列名一一对应-->
+        <property name="fullname" column="fullname"/>
+        <property name="parent_id" column="parent_id"/>
+        <property name="ListOfInterface" column="interface_id_list"/>
+    </class>
+</hibernate-mapping>

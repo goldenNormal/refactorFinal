@@ -1,0 +1,31 @@
+总流程：
+1. 指定 class 的根目录
+2. 获取目录下的所有class 的相对路径 以及 类名
+3. 对每一个class调用解析
+    （1）执行cmd（路径，类名）
+    （2）对字节码进行逐行遍历
+    （3）结果保存至数据库中
+
+获取目录下的所有class 的相对路径 以及 类名：
+    1. 获取目录下所有file
+    2。是目录，进行递归遍历
+    3. 是文件，判断是否class结尾。
+
+解析类：
+    4个全局自增id，以及3个map<string,int>,以及4个list
+invoke
+    通过map获得对应的id
+    type很容易判断
+    isLocal通过本地变量表
+    isParam、isReturn通过首行
+    isMember通过filed关键词
+
+
+ClassLoader:
+    1. 先加载一个类，
+        填入三个list、map
+    2. javap解析
+
+
+
+

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>类与方法可视化</title>
+    <script src="lib/vue.min.js"></script>
+    <script src="lib/echart.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+   
+    <div id="oriMain" style="width: 500px;height: 500px;border:1px dashed rgb(137, 219, 5);float:left" ></div>
+    <div id="refactMain" style="width: 500px;height: 500px;border:1px dashed rgb(137, 219, 5);;float:right"></div>
+    <script>
+        var graph_data;
+        
+
+        function loding(graph_data){
+            var classes=[]
+            var nodes=[]
+            let classSize=15;
+            let methodSize=5;
+            var pox_x=25/graph_data.classes.length
+            graph_data["classes"].map((class_,index) => {
+                var node={
+                    id:nodes.length,
+                    name:class_["name"],
+                    itemStyle:{
+                        color:'red'
+                    },
+                    x:pox_x*(index+1),
+                    y:500,
+                    value:classSize,
+                    label:{
+                        show:true
+                    }
+                }
+                classes.push(node)
+                nodes.push(node)
+            })
+            var methods=[]
+            var edges=[]
+            graph_data["methods"].map((method,index)=>{
+                var node={
+                    id: nodes.length,
+                    name:method["name"],
+                    itemStyle:{
+                        color:'blue'
+                    },
+                    x:pox_x*(index+1),
+                    y:100,
+                    value:methodSize
+                }
+                let c_i=method.class_id-1;
+                let m_i=node.id
+                edges.push(
+                    {
+                        source:c_i,
+                        target:m_i,
+                        // lineStyle:{color:'#0000ff',width: 5,}
+                        lineStyle:{
+                            color:'rgb(137, 219, 5)',
+                            width:5
+                        }
+                    }
+                )
+                methods.push(node)
+                nodes.push(node)
+            })
+
+            graph_data.use.map((use,index)=>{
+                let c_i=use.c_id-1;
+                let m_i=methods[(use.m_id-1)].id;
+                var num=1.0/(use.use_cnt+5)
+                // for(let i=0;i<use.use_cnt;i++){
+                //     edges.push(
+                //     {
+                //         source:m_i,
+                //         target:c_i,
+                //         lineStyle:
+                //         {
+                //             color:'#000000',
+                //             width:1,
+                //             curveness:(i+2)*num
+                //         }
+                //     })
+                // }
+
+                edges.push(
+                    {
+                        source:m_i,
+                        target:c_i,
+                        lineStyle:
+                        {
+                            color:'#000000',
+                            width:use.use_cnt,
+                            curveness:0.5
+                        }
+                    })
+                
+            })
+
+            return {
+                nodes:nodes,
+                links:edges
+            }
+        }
+
+
+        function oriJson(data,dom_id,title_text){
+            graph_data=data;
+            console.log(graph_data)
+            var render=loding(graph_data)
+
+            if(title_text == undefined){
+                title_text="重构前"
+            }
+
+            var option=getOption(render,title_text)
+            if(dom_id == undefined){
+                dom_id="oriMain"
+            }
+            var myChart = echarts.init(document.getElementById(dom_id))
+            
+            myChart.setOption(option)
+
+        }
+        
+        function refactJson(data){
+            oriJson(data,"refactMain","重构后");
+        }
+
+        function getOption(render,title_text){
+            let edge_legth=80
+            var option = {
+                    title:{
+                        text:title_text,
+                        left:'center',
+                        top:'5%',
+                    },
+                    tooltip:{},
+                    legend: {
+                        data:['class','func'],
+                    
+                    },
+                    
+                    textStyle:{
+                        color:'blue',
+                        fontWeight:'bolder',
+                        fontFamily:'KaiTi',
+                        fontSize:15,
+                    },
+                    visualMap: {
+                            show: false,
+                            min: 1,
+                            max: 15,
+                            inRange: {
+                                symbolSize: [4,15]
+                            }
+                        },
+                
+                    series: [{
+                        type: 'graph',
+                        layout:'force',
+                        // symbolSize:5,
+                        draggable:true,
+                        animation: false,
+                    
+                        force:{
+                            edgeLength: edge_legth,
+                            repulsion: 100,
+                            gravity: 0.2
+                        },
+                        // roam:true,
+                    
+                        data: render.nodes,
+                        links:render.links,
+                    
+                        
+                    }]
+                }
+                
+                return option;
+        }
+        
+        
+        
+
+        
+    </script>
+    <script src="./ori.json?cb=oriJson"></script>
+    <script src="./refact.json?cb=refactJson"></script>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!--在domain包下-->
+<hibernate-mapping >
+
+    <!--类名为User，表名也为User-->
+    <class name="com.golden.Statistics" table="statistics">
+
+        <!--主键映射，属性名为id，列名也为id-->
+        <id name="id" column="id">
+            <!--根据底层数据库主键自动增长-->
+            <generator class="native"/>
+
+        </id>
+
+        <!--非主键映射，属性和列名一一对应-->
+        <property name="refactScore" column="refact_score"/>
+        <property name="oriScore" column="ori_score"/>
+        <property name="classCnt" column="class_cnt"/>
+        <property name="memberCnt" column="member_cnt"/>
+        <property name="methodCnt" column="method_cnt"/>
+        <property name="invokeCnt" column="invoke_cnt"/>
+        <property name="execTime" column="exec_time"/>
+        <property name="projectName" column="project_name"/>
+        <property name="disturbanceRate" column="disturbance_rate"/>
+        <property name="stability" column="stability"/>
+    </class>
+</hibernate-mapping>
